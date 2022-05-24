@@ -1,0 +1,16 @@
+PODS:
+  - KxProgressHUD (1.0.0)
+
+DEPENDENCIES:
+  - KxProgressHUD (from `../`)
+
+EXTERNAL SOURCES:
+  KxProgressHUD:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  KxProgressHUD: 720b11255ebaba979dfab4401c2df9010e97ce17
+
+PODFILE CHECKSUM: 02a8d7223b4402abf4b88a1186999cc48957e583
+
+COCOAPODS: 1.11.3
