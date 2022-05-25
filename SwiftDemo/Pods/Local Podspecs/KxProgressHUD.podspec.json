@@ -1,18 +1,13 @@
 {
   "name": "KxProgressHUD",
   "version": "1.0.0",
-  "summary": "A clean and lightweight progress HUD for iOS and tvOS app based on SVProgressHUD, written in Swift.",
-  "description": "KxProgressHUD是一个轻量级便捷HUD工具，是SVProgressHUD的Swift版本，目前仅在iOS12以上系统版本经过测试；",
+  "summary": "iOS导航栏工具，Swift版",
+  "description": "KxSwiftNavigation是一个导航栏工具，是HBDNavigationBar的Swift版本，目前仅在iOS12以上系统版本经过测试；",
+  "homepage": "https://github.com/xygkevin/KxProgressHUD",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
-  "homepage": "https://github.com/xygkevin/KxProgressHUD",
-  "swift_versions": [
-    "5.3",
-    "5.4",
-    "5.5"
-  ],
   "authors": {
     "许亚光": "xu_yaguang@163.com"
   },
@@ -20,16 +15,21 @@
     "git": "https://github.com/xygkevin/KxProgressHUD.git",
     "tag": "1.0.0"
   },
-  "requires_arc": true,
+  "source_files": "Sources/KxProgressHUD/*.swift",
+  "resources": "Sources/KxProgressHUD/Resources/KxProgressHUD.bundle",
   "frameworks": [
     "UIKit",
     "Foundation"
   ],
+  "requires_arc": true,
+  "swift_versions": [
+    "5.3",
+    "5.4",
+    "5.5"
+  ],
   "platforms": {
     "ios": "12.0"
   },
-  "source_files": "Sources/KxProgressHUD/*.swift",
-  "resources": "Sources/KxProgressHUD/Resources/KxProgressHUD.bundle",
   "pod_target_xcconfig": {
     "VALID_ARCHS": "x86_64 armv7 arm64"
   },
