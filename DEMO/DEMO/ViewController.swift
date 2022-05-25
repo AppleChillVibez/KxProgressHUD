@@ -17,7 +17,8 @@ class ViewController: UIViewController {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         KxProgressHUD.set(defaultStyle: .dark)
-        KxProgressHUD.showSuccesswithStatus("hahahhhahahh")
+        KxProgressHUD.showSuccesswithStatus("加载成功")
+        KxProgressHUD.dismissWithDelay(2)
     }
 
 }
