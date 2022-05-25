@@ -1,6 +1,0 @@
-framework module Pods_KxProgressHUD {
-  umbrella header "Pods-KxProgressHUD-umbrella.h"
-
-  export *
-  module * { export * }
-}

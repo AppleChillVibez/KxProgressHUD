@@ -1,12 +1,12 @@
 Pod::Spec.new do |spec|
 
   spec.name         	    = 'KxProgressHUD'
-  spec.version      	    = '1.0.0'
+  spec.version      	    = '1.0.1'
   spec.summary      	    = 'iOS导航栏工具，Swift版'
   spec.description  	    = <<-DESC
 KxSwiftNavigation是一个导航栏工具，是HBDNavigationBar的Swift版本，目前仅在iOS12以上系统版本经过测试；
                             DESC
-  spec.homepage     	    = 'https://github.com/xygkevin/KxProgressHUD'
+  spec.homepage     	    = 'https://github.com/xygkevin/KxProgressHUD.git'
   spec.license      	    = { :type => 'MIT', :file => 'LICENSE' }
   spec.author       	    = { '许亚光' => 'xu_yaguang@163.com' }
   spec.source       	    = { :git => 'https://github.com/xygkevin/KxProgressHUD.git', :tag => spec.version.to_s }

@@ -628,7 +628,7 @@ open class KxProgressHUD : UIView {
         
         if getStatusLabel().text != nil {
             let constraintSize = CGSize(width: 200.0, height: 300.0)
-            labelRect = getStatusLabel().text?.boundingRect(with: constraintSize, options: [.usesFontLeading, .truncatesLastVisibleLine, .usesLineFragmentOrigin], attributes: [NSAttributedString.Key.font: getStatusLabel().font], context: nil) ?? CGRect.zero
+            labelRect = getStatusLabel().text?.boundingRect(with: constraintSize, options: [.usesFontLeading, .truncatesLastVisibleLine, .usesLineFragmentOrigin], attributes: [NSAttributedString.Key.font: getStatusLabel().font as Any], context: nil) ?? CGRect.zero
             labelHeight = CGFloat(ceilf(Float(labelRect.height )))
             labelWidth = CGFloat(ceilf(Float(labelRect.width )))
         }
@@ -1260,7 +1260,9 @@ extension KxProgressHUD {
     }
     
     private func loadImageBundle(named imageName:String) -> UIImage? {
-        let imageBundle = Bundle.init(for: KxProgressHUD.self)
+        guard let bundlePath = Bundle.init(for: KxProgressHUD.self).path(forResource: "KxProgressHUD", ofType: "bundle"), let imageBundle = Bundle(path: bundlePath) else {
+            return nil
+        }
         return (UIImage(named: imageName, in: imageBundle, compatibleWith: nil))
     }
 }
