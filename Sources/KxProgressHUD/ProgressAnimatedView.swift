@@ -10,11 +10,11 @@ import UIKit
 
 class ProgressAnimatedView: UIView {
     
-    private var radius : CGFloat?
-    private var strokeThickness : CGFloat?
-    private var strokeColor : UIColor?
-    private var strokeEnd : CGFloat?
-    private var ringAnimatedLayer : CAShapeLayer?
+    private var radius: CGFloat?
+    private var strokeThickness: CGFloat?
+    private var strokeColor: UIColor?
+    private var strokeEnd: CGFloat?
+    private var ringAnimatedLayer: CAShapeLayer?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,8 +44,8 @@ class ProgressAnimatedView: UIView {
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let localRadius : CGFloat = radius ?? 18
-        let localStrokeThickness : CGFloat = strokeThickness ?? 2
+        let localRadius: CGFloat = radius ?? 18
+        let localStrokeThickness: CGFloat = strokeThickness ?? 2
         return CGSize(width: (localRadius + localStrokeThickness / 2 + 5) * 2, height: (localRadius + localStrokeThickness / 2 + 5) * 2)
     }
 

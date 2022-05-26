@@ -6,40 +6,12 @@
 //  Copyright © 2022 浪里小海豚. All rights reserved.
 //
 
-
 import UIKit
 
-public enum NotificationName : String {
-    case KxProgressHUDDidReceiveTouchEvent,
-         KxProgressHUDDidTouchDownInside,
-         KxProgressHUDWillDisappear,
-         KxProgressHUDDidDisappear,
-         KxProgressHUDWillAppear,
-         KxProgressHUDDidAppear,
-         KxProgressHUDStatusUserInfoKey
-    
-    public func getNotificationName() -> Notification.Name {
-        return Notification.Name.init(self.rawValue)
+fileprivate extension NotificationCenter {
+    static func post(kxNotification name: KxProgressHUD.NotificationName, object: Any? = nil, userInfo: [AnyHashable : Any]? = nil) {
+        NotificationCenter.default.post(name: name.notificationName, object: object, userInfo: userInfo)
     }
-}
-
-public enum KxProgressHUDStyle : Int {
-    case light
-    case dark
-    case custom
-}
-
-public enum KxProgressHUDMaskType : Int {
-    case none = 1
-    case clear
-    case black
-    case gradient
-    case custom
-}
-
-public enum KxProgressHUDAnimationType : Int {
-    case flat
-    case native
 }
 
 private let KxProgressHUDParallaxDepthPoints : CGFloat      = 10.0
@@ -51,21 +23,55 @@ private let KxProgressHUDLabelSpacing: CGFloat              = 8.0
 
 open class KxProgressHUD : UIView {
     
+    public enum Style: Int {
+        case light
+        case dark
+        case custom
+    }
+    
+    public enum MaskType: Int {
+        case none = 1
+        case clear
+        case black
+        case gradient
+        case custom
+    }
+    
+    public enum AnimationType: Int {
+        case flat
+        case native
+    }
+    
+    public enum NotificationName: String {
+        case didReceiveTouchEvent
+        case didTouchDownInside
+        case willDisappear
+        case didDisappear
+        case willAppear
+        case didAppear
+        
+        var notificationName: Notification.Name {
+            return NSNotification.Name("KxProgressHUD" + rawValue.capitalized + "NotificationName")
+        }
+    }
+    
+    static let NotificationStatusUserInfoKey = "KxProgressHUDNotificationStatusUserInfoKey"
+    
     static var isNotAppExtension = true
     
-    private var defaultStyle            = KxProgressHUDStyle.light
-    private var defaultMaskType         = KxProgressHUDMaskType.none
-    private var defaultAnimationType    = KxProgressHUDAnimationType.flat
+    private var defaultStyle: Style = .light
+    private var defaultMaskType: MaskType = .none
+    private var defaultAnimationType: AnimationType = .flat
     private var containerView: UIView?
-    private var minimumSize             = CGSize.init(width: 50, height: 50)
-    private var ringThickness: CGFloat  = 2.0
-    private var ringRadius: CGFloat     = 18.0
+    private var minimumSize = CGSize(width: 50, height: 50)
+    private var ringThickness: CGFloat = 2.0
+    private var ringRadius: CGFloat = 18.0
     private var ringNoTextRadius: CGFloat = 24.0
-    private var cornerRadius: CGFloat   = 14.0
-    private var font = UIFont.preferredFont(forTextStyle: .subheadline)
+    private var cornerRadius: CGFloat = 14.0
+    private var font: UIFont = .preferredFont(forTextStyle: .subheadline)
     private var foregroundColor : UIColor?
-    private var backgroundLayerColor = UIColor.init(white: 0, alpha: 0.4)
-    private var imageViewSize: CGSize = CGSize.init(width: 28, height: 28)
+    private var backgroundLayerColor = UIColor(white: 0, alpha: 0.4)
+    private var imageViewSize: CGSize = CGSize(width: 28, height: 28)
     private var shouldTintImages : Bool = true
     private var infoImage: UIImage!
     private var successImage: UIImage! //= UIImage.init(named: "success")!
@@ -78,7 +84,7 @@ open class KxProgressHUD : UIView {
     private var fadeInAnimationDuration: TimeInterval = TimeInterval(KxProgressHUDDefaultAnimationDuration)
     private var fadeOutAnimationDuration: TimeInterval = TimeInterval(KxProgressHUDDefaultAnimationDuration)
     private var maxSupportedWindowLevel: UIWindow.Level = UIWindow.Level.normal
-    private var hapticsEnabled = false
+    private var hapticsEnabled: Bool = false
     private var graceTimer: Timer?
     private var fadeOutTimer: Timer?
     private var controlView: UIControl?
@@ -109,19 +115,21 @@ open class KxProgressHUD : UIView {
 #endif
     private override init(frame: CGRect) {
         super.init(frame: frame)
-        infoImage = loadImageBundle(named: "info")!
-        successImage = loadImageBundle(named: "success")!
-        errorImage = loadImageBundle(named: "error")
+        backgroundColor          = .clear
         isUserInteractionEnabled = false
+        isAccessibilityElement   = true
+        accessibilityIdentifier  = "KxProgressHUD"
+        
+        infoImage     = loadImageBundle(named: "info")!
+        successImage  = loadImageBundle(named: "success")!
+        errorImage    = loadImageBundle(named: "error")
         activityCount = 0
-        getBackGroundView().alpha = 0.0
-        getImageView().alpha = 0.0
-        getStatusLabel().alpha = 1.0
+        
+        getStatusLabel().alpha            = 1.0
+        getBackGroundView().alpha         = 0.0
+        getImageView().alpha              = 0.0
         getIndefiniteAnimatedView().alpha = 0.0
-        getBackgroundRingView().alpha = 0.0
-        backgroundColor = UIColor.clear
-        accessibilityIdentifier = "KxProgressHUD"
-        isAccessibilityElement = true
+        getBackgroundRingView().alpha     = 0.0
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -265,12 +273,11 @@ open class KxProgressHUD : UIView {
     }
     
     @objc private func controlViewDidReceiveTouchEvent(_ sender: Any?, for event: UIEvent?) {
-        NotificationCenter.default.post(name: NotificationName.KxProgressHUDDidReceiveTouchEvent.getNotificationName(), object: self, userInfo: notificationUserInfo())
+        NotificationCenter.post(kxNotification: .didReceiveTouchEvent, object: self, userInfo: notificationUserInfo())
         
         if let touchLocation = event?.allTouches?.first?.location(in: self) {
             if getHudView().frame.contains(touchLocation) {
-                NotificationCenter.default.post(name:
-                                                    NotificationName.KxProgressHUDDidTouchDownInside.getNotificationName(), object: self, userInfo: notificationUserInfo())
+                NotificationCenter.post(kxNotification: .didTouchDownInside, object: self, userInfo: notificationUserInfo())
             }
         }
         
@@ -278,7 +285,7 @@ open class KxProgressHUD : UIView {
     
     func notificationUserInfo() -> [String : Any]? {
         if let statusText = getStatusLabel().text {
-            return [NotificationName.KxProgressHUDStatusUserInfoKey.rawValue: statusText]
+            return [KxProgressHUD.NotificationStatusUserInfoKey: statusText]
         }
         return nil
     }
@@ -300,7 +307,7 @@ open class KxProgressHUD : UIView {
         }
         
         if getBackGroundView().alpha != 1.0 {
-            NotificationCenter.default.post(name: NotificationName.KxProgressHUDWillAppear.getNotificationName(), object: self, userInfo: notificationUserInfo())
+            NotificationCenter.post(kxNotification: .willAppear, object: self, userInfo: notificationUserInfo())
             
             getHudView().transform = CGAffineTransform.init(scaleX: 1/1.5, y: 1/1.5)
             let animationsBlock : () -> Void = {
@@ -316,9 +323,7 @@ open class KxProgressHUD : UIView {
                 if self.getBackGroundView().alpha == 1.0 {
                     self.registerNotifications()
                 }
-                
-                NotificationCenter.default.post(name: NotificationName.KxProgressHUDDidAppear.getNotificationName(), object: self, userInfo: self.notificationUserInfo())
-                
+                NotificationCenter.post(kxNotification: .didAppear, object: self, userInfo: self.notificationUserInfo())
                 // Update accessibility
                 
                 UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: nil)
@@ -535,7 +540,7 @@ open class KxProgressHUD : UIView {
             // Stop timer
             strongSelf.setGrace(timer: nil)
             // Post notification to inform user
-            NotificationCenter.default.post(name: NotificationName.KxProgressHUDWillDisappear.getNotificationName(), object: nil, userInfo: strongSelf.notificationUserInfo())
+            NotificationCenter.post(kxNotification: .willDisappear, object: strongSelf, userInfo: strongSelf.notificationUserInfo())
             
             // Reset activity count
             strongSelf.activityCount = 0
@@ -567,8 +572,7 @@ open class KxProgressHUD : UIView {
                     NotificationCenter.default.removeObserver(strongSelf)
                     // Post notification to inform user
                     //KxProgressHUDDidDisappearNotification
-                    NotificationCenter.default.post(name: NotificationName.KxProgressHUDDidDisappear.getNotificationName(), object: strongSelf, userInfo: strongSelf.notificationUserInfo())
-                    
+                    NotificationCenter.post(kxNotification: .didReceiveTouchEvent, object: strongSelf, userInfo: strongSelf.notificationUserInfo())
                     // Tell the rootViewController to update the StatusBar appearance
 #if os(iOS)
                     if KxProgressHUD.isNotAppExtension {
@@ -919,7 +923,7 @@ open class KxProgressHUD : UIView {
 
 extension KxProgressHUD {
     
-    public class func set(defaultStyle style: KxProgressHUDStyle) {
+    public class func set(defaultStyle style: KxProgressHUD.Style) {
         sharedView.defaultStyle = style
     }
     
@@ -928,11 +932,11 @@ extension KxProgressHUD {
         sharedView.hudBackgroundColor = color
     }
     
-    public class func set(defaultMaskType maskType: KxProgressHUDMaskType) {
+    public class func set(defaultMaskType maskType: KxProgressHUD.MaskType) {
         sharedView.defaultMaskType = maskType
     }
     
-    public class func set(defaultAnimationType type: KxProgressHUDAnimationType) {
+    public class func set(defaultAnimationType type: KxProgressHUD.AnimationType) {
         sharedView.defaultAnimationType = type
     }
     
