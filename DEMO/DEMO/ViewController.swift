@@ -18,7 +18,6 @@ class ViewController: UIViewController {
         clayer.position = view.center
         clayer.gradientCenter = view.center
         view.layer.addSublayer(clayer)
-        
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

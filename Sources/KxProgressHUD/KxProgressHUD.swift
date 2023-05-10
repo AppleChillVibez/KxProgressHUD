@@ -74,8 +74,8 @@ open class KxProgressHUD : UIView {
     private var imageViewSize: CGSize = CGSize(width: 28, height: 28)
     private var shouldTintImages : Bool = true
     private var infoImage: UIImage!
-    private var successImage: UIImage! //= UIImage.init(named: "success")!
-    private var errorImage: UIImage! //= UIImage.init(named: "error")!
+    private var successImage: UIImage!
+    private var errorImage: UIImage!
     private var viewForExtension: UIView?
     private var graceTimeInterval: TimeInterval = 0.0
     private var minimumDismissTimeInterval: TimeInterval = 5.0
@@ -161,28 +161,15 @@ open class KxProgressHUD : UIView {
     
     private static let sharedView : KxProgressHUD = {
         var localInstance : KxProgressHUD?
-        if Thread.current.isMainThread {
+        DispatchQueue.main.sync {
             if KxProgressHUD.isNotAppExtension {
-                if let window = UIApplication.shared.delegate?.window {
-                    localInstance = KxProgressHUD.init(frame: window?.bounds ?? CGRect.zero)
+                if let window = UIApplication.shared.windows.first {
+                    localInstance = KxProgressHUD.init(frame: window.bounds)
                 } else {
                     localInstance = KxProgressHUD()
                 }
-            }
-            else {
+            } else {
                 localInstance = KxProgressHUD.init(frame: UIScreen.main.bounds)
-            }
-        } else {
-            DispatchQueue.main.sync {
-                if KxProgressHUD.isNotAppExtension {
-                    if let window = UIApplication.shared.delegate?.window {
-                        localInstance = KxProgressHUD.init(frame: window?.bounds ?? CGRect.zero)
-                    } else {
-                        localInstance = KxProgressHUD()
-                    }
-                } else {
-                    localInstance = KxProgressHUD.init(frame: UIScreen.main.bounds)
-                }
             }
         }
         return localInstance!
@@ -230,7 +217,6 @@ open class KxProgressHUD : UIView {
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
                 strongSelf.getRingView().set(strokeEnd: CGFloat(progress))
-                //                strongSelf.ringView.strokeEnd = progress;
                 CATransaction.commit()
                 
                 // Update the activity count
@@ -374,8 +360,7 @@ open class KxProgressHUD : UIView {
         
 #if os(iOS) // notAppExtension + iOS
         if KxProgressHUD.isNotAppExtension {
-            if let appDelegate = UIApplication.shared.delegate,
-               let window : UIWindow = appDelegate.window! {
+            if let window: UIWindow = UIApplication.shared.windows.first {
                 frame = window.bounds
             }
             var orientation = UIApplication.shared.statusBarOrientation
@@ -410,7 +395,7 @@ open class KxProgressHUD : UIView {
         let orientationFrame = bounds
 #if os(tvOS)
         if KxProgressHUD.isNotAppExtension {
-            if let keyWindow : UIWindow = UIApplication.shared.keyWindow {
+            if let keyWindow : UIWindow = UIApplication.shared.windows.first {
                 frame = keyWindow.bounds
             }
         }
@@ -576,7 +561,7 @@ open class KxProgressHUD : UIView {
                     // Tell the rootViewController to update the StatusBar appearance
 #if os(iOS)
                     if KxProgressHUD.isNotAppExtension {
-                        let rootController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
+                        let rootController: UIViewController? = UIApplication.shared.windows.first?.rootViewController
                         rootController?.setNeedsStatusBarAppearanceUpdate()
                     }
 #endif
@@ -1053,19 +1038,11 @@ extension KxProgressHUD {
     
     
     // MARK: - Show Methods
-    public class func show() {
-        show(withStatus: nil)
-    }
-    
-    public class func show(withStatus status: String?) {
+    public class func show(_ status: String? = nil) {
         show(progress: KxProgressHUDUndefinedProgress, status: status)
     }
     
-    public class func show(progress: CGFloat) {
-        show(progress: progress, status: nil)
-    }
-    
-    public class func show(progress: CGFloat, status: String?) {
+    public class func show(progress: CGFloat, status: String? = nil) {
         sharedView.showProgress(progress: Float(progress), status: status)
     }
     
@@ -1086,19 +1063,7 @@ extension KxProgressHUD {
         }
     } // decrease activity count, if activity count == 0 the HUD is dismissed
     
-    public class func dismiss() {
-        dismissWithDelay(0.0)
-    }
-    
-    public class func dismissWithCompletion(_ completion: (() -> Void)?) {
-        dismissWithDelay(0.0, completion: completion)
-    }
-    
-    public class func dismissWithDelay(_ delay: TimeInterval) {
-        dismissWithDelay(delay, completion: nil)
-    }
-    
-    public class func dismissWithDelay(_ delay: TimeInterval, completion: (() -> Void)?) {
+    public class func dismiss(with delay: TimeInterval = 0, completion:(() -> Void)? = nil) {
         sharedView.dismissWithDelay(delay, completion: completion)
     }
     
@@ -1111,7 +1076,7 @@ extension KxProgressHUD {
         return TimeInterval(min(minimum, CGFloat(sharedView.maximumDismissTimeInterval)))
     }
     
-    public class func showInfowithStatus(_ status: String?) {
+    public class func showInfo(_ status: String?) {
         showImage(sharedView.infoImage, status: status)
 #if os(iOS)
         if #available(iOS 10.0, *) {
@@ -1125,7 +1090,7 @@ extension KxProgressHUD {
         sharedView.show(image: image, status: status, duration: displayInterval)
     }
     
-    public class func showSuccesswithStatus(_ status: String?) {
+    public class func showSuccess(_ status: String?) {
         showImage(sharedView.successImage, status: status)
 #if os(iOS)
         if #available(iOS 10.0, *) {
@@ -1246,14 +1211,14 @@ extension KxProgressHUD {
     
     private func getControlView() -> UIControl {
         if controlView == nil {
-            controlView = UIControl.init()
+            controlView = UIControl()
             controlView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             controlView?.backgroundColor = .clear
             controlView?.isUserInteractionEnabled = true
             controlView?.addTarget(self, action: #selector(controlViewDidReceiveTouchEvent(_:for:)), for: .touchDown)
         }
         if KxProgressHUD.isNotAppExtension {
-            if let windowBounds : CGRect = UIApplication.shared.delegate?.window??.bounds {
+            if let windowBounds : CGRect = UIApplication.shared.windows.first?.bounds {
                 controlView?.frame = windowBounds
             }
         }
