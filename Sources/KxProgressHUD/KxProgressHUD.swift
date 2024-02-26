@@ -363,7 +363,7 @@ open class KxProgressHUD : UIView {
             if let window: UIWindow = UIApplication.shared.windows.first {
                 frame = window.bounds
             }
-            var orientation = UIApplication.shared.statusBarOrientation
+            var orientation = keyWindowScene()?.interfaceOrientation ?? .portrait
             
             if frame.width > frame.height {
                 orientation = .landscapeLeft
@@ -387,7 +387,7 @@ open class KxProgressHUD : UIView {
             } else {
                 keyboardHeight = getVisibleKeyboardHeight()
             }
-            statusBarFrame = UIApplication.shared.statusBarFrame
+            statusBarFrame = keyWindowScene()?.statusBarManager?.statusBarFrame ?? .zero
             updateMotionEffectForOrientation(orientation)
         }
 #endif
@@ -1234,4 +1234,28 @@ extension KxProgressHUD {
         }
         return (UIImage(named: imageName, in: imageBundle, compatibleWith: nil))
     }
+}
+
+extension KxProgressHUD {
+    
+    fileprivate func keyWindow() -> UIWindow? {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene})
+            .filter({ $0.activationState == .foregroundActive})
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else {
+            return nil
+        }
+        return window
+    }
+    
+    fileprivate func keyWindowScene() -> UIWindowScene? {
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene})
+            .first(where: { $0.activationState == .foregroundActive}) else {
+            return nil
+        }
+        return scene
+    }
+    
 }
