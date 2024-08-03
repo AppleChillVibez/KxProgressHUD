@@ -1,11 +1,3 @@
-//
-//  KxProgressHUD.swift
-//  KxProgressHUD
-//
-//  Created by 许亚光 on 2022/3/11.
-//  Copyright © 2022 浪里小海豚. All rights reserved.
-//
-
 import QuartzCore
 
 class KxRadialGradientLayer: CALayer {
@@ -16,11 +8,25 @@ class KxRadialGradientLayer: CALayer {
         super.draw(in: context)
         let locationsCount: Int = 2
         let locations: [CGFloat] = [0.0, 1.0]
-        let colors: [CGFloat] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75]
+        
+        // Darker colors by increasing the alpha values
+        let colors: [CGFloat] = [
+            0.0, 0.0, 0.0, 0.6, // Darker at the center (increased alpha to 0.6)
+            0.0, 0.0, 0.0, 0.8  // Darker at the edge (increased alpha to 0.9)
+        ]
+        
         let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
         if let gradient = CGGradient(colorSpace: colorSpace, colorComponents: colors, locations: locations, count: locationsCount) {
             let radius = min(bounds.size.width, bounds.size.height)
-            context.drawRadialGradient(gradient, startCenter: gradientCenter, startRadius: 0, endCenter: gradientCenter, endRadius: radius, options: CGGradientDrawingOptions.drawsAfterEndLocation)
+            context.drawRadialGradient(
+                gradient,
+                startCenter: gradientCenter,
+                startRadius: 0,
+                endCenter: gradientCenter,
+                endRadius: radius,
+                options: CGGradientDrawingOptions.drawsAfterEndLocation
+            )
         }
     }
 }
