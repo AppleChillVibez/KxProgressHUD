@@ -276,6 +276,9 @@ open class KxProgressHUD : UIView {
   
   
   @objc private func fadeIn(_ object: AnyObject?) {
+    getHudView().setNeedsLayout()
+    getHudView().layoutIfNeeded()
+    
     updateHUDFrame()
     positionHUD()
     if (defaultMaskType != .none) {
@@ -1164,6 +1167,8 @@ extension KxProgressHUD {
     
     if hudView?.superview == nil {
       self.addSubview(hudView!)
+      hudView?.setNeedsLayout()
+      hudView?.layoutIfNeeded()
     }
     
     hudView?.layer.cornerRadius = cornerRadius

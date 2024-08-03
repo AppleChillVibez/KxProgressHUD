@@ -1,32 +1,29 @@
 import QuartzCore
 
 class KxRadialGradientLayer: CALayer {
+  
+  var gradientCenter = CGPoint.zero
+  
+  override func draw(in context: CGContext) {
+    super.draw(in: context)
+    let locationsCount: Int = 2
+    let locations: [CGFloat] = [0.0, 1.0]
+    let colors: [CGFloat] = [
+      0.0, 0.0, 0.0, 0.5,
+      0.0, 0.0, 0.0, 0.75
+    ]
     
-    var gradientCenter = CGPoint.zero
-    
-    override func draw(in context: CGContext) {
-        super.draw(in: context)
-        let locationsCount: Int = 2
-        let locations: [CGFloat] = [0.0, 1.0]
-        
-        // Darker colors by increasing the alpha values
-        let colors: [CGFloat] = [
-            0.0, 0.0, 0.0, 0.6, // Darker at the center (increased alpha to 0.6)
-            0.0, 0.0, 0.0, 0.8  // Darker at the edge (increased alpha to 0.9)
-        ]
-        
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        
-        if let gradient = CGGradient(colorSpace: colorSpace, colorComponents: colors, locations: locations, count: locationsCount) {
-            let radius = min(bounds.size.width, bounds.size.height)
-            context.drawRadialGradient(
-                gradient,
-                startCenter: gradientCenter,
-                startRadius: 0,
-                endCenter: gradientCenter,
-                endRadius: radius,
-                options: CGGradientDrawingOptions.drawsAfterEndLocation
-            )
-        }
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    if let gradient = CGGradient(colorSpace: colorSpace, colorComponents: colors, locations: locations, count: locationsCount) {
+      let radius = min(bounds.size.width, bounds.size.height)
+      context.drawRadialGradient(
+        gradient,
+        startCenter: gradientCenter,
+        startRadius: 0,
+        endCenter: gradientCenter,
+        endRadius: radius,
+        options: CGGradientDrawingOptions.drawsAfterEndLocation
+      )
     }
+  }
 }
