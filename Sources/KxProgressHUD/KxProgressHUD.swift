@@ -618,7 +618,7 @@ open class KxProgressHUD : UIView {
     
     if let text = getStatusLabel().text {
       // Increase the width constraint size to allow for more horizontal space
-      let constraintSize = CGSize(width: 500.0, height: 200.0) // Increased width constraint
+      let constraintSize = CGSize(width: min(500, bounds.width), height: 200.0) // Increased width constraint
       labelRect = text.boundingRect(with: constraintSize, options: [.usesFontLeading, .truncatesLastVisibleLine, .usesLineFragmentOrigin], attributes: [NSAttributedString.Key.font: getStatusLabel().font as Any], context: nil)
       labelHeight = CGFloat(ceil(labelRect.height))
       labelWidth = CGFloat(ceil(labelRect.width))
