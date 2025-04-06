@@ -1229,14 +1229,7 @@ extension KxProgressHUD {
       controlView?.isUserInteractionEnabled = true
       controlView?.addTarget(self, action: #selector(controlViewDidReceiveTouchEvent(_:for:)), for: .touchDown)
     }
-    if KxProgressHUD.isNotAppExtension {
-      if let windowBounds : CGRect = UIApplication.shared.windows.first?.bounds {
-        controlView?.frame = windowBounds
-      }
-    }
-    else {
-      controlView?.frame = UIScreen.main.bounds
-    }
+    controlView?.frame = UIScreen.main.bounds
     return controlView!
   }
   
