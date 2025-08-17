@@ -361,7 +361,7 @@ open class KxProgressHUD : UIView {
     
 #if os(iOS) // notAppExtension + iOS
     if KxProgressHUD.isNotAppExtension {
-      if let window: UIWindow = UIApplication.shared.windows.first {
+      if let window: UIWindow = UIApplication.shared.windows.first(where: { $0.frame != .zero }) {
         frame = window.bounds
       }
       var orientation = keyWindowScene()?.interfaceOrientation ?? .portrait
@@ -504,7 +504,8 @@ open class KxProgressHUD : UIView {
         }
       }
       strongSelf.getImageView().isHidden = false
-      
+
+      strongSelf.getStatusLabel().text = nil
       strongSelf.getStatusLabel().isHidden = status == nil || status?.count == 0
       if let stts = status {
         strongSelf.getStatusLabel().text = stts
