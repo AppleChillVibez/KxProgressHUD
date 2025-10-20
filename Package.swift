@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "KxProgressHUD",
             resources: [
-                .process("Resources"),
+                .process("Resources/KxProgressHUD")
             ]
         )
     ]
