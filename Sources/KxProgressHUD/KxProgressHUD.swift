@@ -120,9 +120,9 @@ open class KxProgressHUD : UIView {
     isAccessibilityElement   = true
     accessibilityIdentifier  = "KxProgressHUD"
     
-    infoImage     = loadImageBundle(named: "info")!
-    successImage  = loadImageBundle(named: "success")!
-    errorImage    = loadImageBundle(named: "error")
+    infoImage     = .init(systemName: "exclamationmark.circle")
+    successImage  = .init(systemName: "checkmark.circle")
+    errorImage    = .init(systemName: "x.circle")
     activityCount = 0
     
     getStatusLabel().alpha            = 1.0
