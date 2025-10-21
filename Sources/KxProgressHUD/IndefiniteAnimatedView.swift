@@ -182,7 +182,7 @@ extension IndefiniteAnimatedView {
     }
     
     private func loadImageBundle(named imageName: String) -> UIImage? {        
-        guard let bundlePath = Bundle.init(for: IndefiniteAnimatedView.self).path(forResource: "KxProgressHUD", ofType: "bundle"), let imageBundle = Bundle(path: bundlePath) else {
+        guard let bundlePath = Bundle.init(for: IndefiniteAnimatedView.self).path(forResource: "KxProgressHUD_KxProgressHUD", ofType: "bundle"), let imageBundle = Bundle(path: bundlePath) else {
             return nil
         }
         return (UIImage(named: imageName, in: imageBundle, compatibleWith: nil))
